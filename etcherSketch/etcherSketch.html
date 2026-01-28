@@ -1,10 +1,41 @@
 <!DOCTYPE html>
     <head>
+        <link rel="stylesheet" href="cssReset.css">
         <link rel="stylesheet" href="etcherSketch.css">
     </head>
 
     <body>
-        
+        <div class="gridOptions">
+            <div>
+                Please select the preferred Grid sizing
+            </div>
+            <div>
+                <input type="radio" id="8" name="gridSelection" value=8 />
+                <label for="8">8 x 8</label>
+            </div>
+            <div>
+                <input type="radio" id="16" name="gridSelection" value=16 />
+                <label for="16">16 x 16</label>
+            </div>
+            <div>
+                <input type="radio" id="32" name="gridSelection" value=32 />
+                <label for="32">32 x 32</label>
+            </div>
+            <div>
+                <input type="radio" id="64" name="gridSelection" value=64 />
+                <label for="64"></label>64 x 64</label>
+            </div>
+            
+            <p>(Or)</p>
+            <label for="customValue"> Pick a custom value (1-100):</label>
+            <input type="number" id="customValue" name="gridSelectionOther" min="1" max="100"/>
+            <button>Submit</button>
+
+        </div>
+
+        <div class = "outerContainer">
+        </div>
+
         <script src="etcherSketch.js"></script>
     </body>
 </html>

@@ -1,0 +1,44 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.gridOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+button {
+    align-self: center;
+}
+
+.outerContainer {
+    width: 560px;
+    height: 560px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: 1px solid black;
+}
+
+/* 
+
+Divs within container must be sized 
+as per the grid cell count.
+
+> If 8x8, dvide 560px by 8
+> If 16x16, divide 560px by 16
+
+Don't round decimals to the floor
+
+*/
+
+.outerContainer div {
+    background: black;
+    opacity: 0;
+    box-sizing: border-box;  
+    border: 1px solid black;
+}
