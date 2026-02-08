@@ -1,0 +1,68 @@
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    height: 90vh;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    min-width: 30px ;
+    min-height: 30px ;
+}
+
+
+.display {
+    background-color: lightgoldenrodyellow;
+    display: flex;
+    justify-content: center;
+    min-width: 220px;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 10px;
+}
+
+.display .displayBox {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.display .displayBox div{
+    flex-basis: 25px;
+    padding: 5px;
+    text-align: right;
+}
+
+.display .displayBox .displayField{
+    flex-basis: 40px;
+    font-size: 25px;
+}
+
+.calcPad {
+    background-color: lightsalmon;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.numPad {
+    margin: 10px;
+    padding: 10px;
+    background-color: lightgoldenrodyellow;
+    flex-basis: 120px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.operatorPad {
+    margin: 10px;
+    padding: 10px;
+    background-color: lightgoldenrodyellow;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
