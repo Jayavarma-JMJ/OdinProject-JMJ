@@ -98,7 +98,7 @@ function calculation(arr){
 
         case '/':
         return (Number(arr[0]) / Number(arr[2]));
-//        return (Math.floor(Number(arr[0]) / Number(arr[2]) * 100)) / 100;  // Uncheck if higher precison is not needed
+      //return (Math.floor(Number(arr[0]) / Number(arr[2]) * 100)) / 100;   Uncheck if higher precison is not needed
     }
 }
 
