@@ -36,8 +36,8 @@ button {
 }
 
 .display .displayBox .displayField{
-    flex-basis: 40px;
-    font-size: 25px;
+    flex-basis: 10px;
+    font-size: 10px;
 }
 
 .calcPad {
