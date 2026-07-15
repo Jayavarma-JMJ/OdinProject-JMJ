@@ -1,0 +1,17 @@
+body {
+    box-sizing: border-box;
+
+}
+
+.library {
+    margin: 20px;
+
+    background-color: beige;
+}
+
+.displayed {
+    list-style-type: none;
+    padding: 5px;
+    margin: 10px;
+    background-color: bisque;
+}
