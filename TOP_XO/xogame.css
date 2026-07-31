@@ -1,0 +1,12 @@
+td {
+    width: 100px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 30px);
+    grid-template-rows: repeat(3, 30px);
+
+    max-width: fit-content;
+    background-color: black;
+}
