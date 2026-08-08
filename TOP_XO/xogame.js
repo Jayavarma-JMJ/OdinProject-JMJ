@@ -1,11 +1,3 @@
-
-/*
-1. Set Symbol
-2. Alternate the symbol
-3. 
-
-*/
-
 const player = (() => {
 
     let playerOne = {};
@@ -70,27 +62,72 @@ const player = (() => {
 
 const board = (() => {
 
+    const boardSizeEle = document.querySelector('.boardSize');
+    const lengthToWinEle = document.querySelector('.lengthToWin');
+    
+    let boardSize = 3;
+    let lengthToWin = 3;
+    let boardMax = boardSizeEle.max;
+
+    boardSizeEle.addEventListener('input', (e) => {  
+        // console.log(`boardMax is ${boardMax}`)
+        boardSize = parseInt(e.target.value);
+        // console.log(`Entered size is ${boardSize}`);
+        if (boardSize > boardMax) {
+            boardSizeEle.value = boardMax;
+            boardSize = boardMax;
+            // console.log(`Resized size is ${boardSize}`);
+        }
+    })
+
+    lengthToWinEle.addEventListener('input', (e) => {
+        lengthToWin = parseInt(e.target.value);
+
+        if (lengthToWin > boardSize || lengthToWin < 3) {
+            lengthToWinEle.value = boardSize;
+            lengthToWin = boardSize;
+            boardSize === 3 ? alert('Please choose 3') : alert(`Please choose between 3 and ${boardSize}`);
+        }
+
+        // console.log(lengthToWin);
+    })
+
+    function getBoardSize() {
+        return boardSize;
+    }
+
+    function getLengthToWin() {
+        if (Number.isNaN(lengthToWin)) {
+            lengthToWin = 3;
+            lengthToWinEle.value = 3;
+        }
+        if (lengthToWin > boardSize || lengthToWin < 3) {
+            lengthToWinEle.value = boardSize;
+            lengthToWin = boardSize;
+        }
+        return lengthToWin;
+    }
+
     let cells = [];
     const boardElement = document.querySelector('.board');
-    const reset = document.querySelector('.reset');
-    reset.addEventListener('click', () => {
-        console.log('reset pressed');
-        resetBoard(true);
-    });
 
     function resetBoard(complete) {
         if(complete === true){
             player.scoreReset();
         }
+        cells = [];
         boardElement.innerHTML = '';
-        for(let i=0; i<=2 ; i++){
+        boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`;
+        boardElement.style.gridTemplateRows = `repeat(${boardSize}, 30px)`;
+        for(let i=0; i < boardSize ; i++){
             cells[i] = [];
-            for(let j=0; j<=2; j++){
+            for(let j=0; j < boardSize; j++){
                 let cell = document.createElement('button');
                 cell.addEventListener('click', setSymbol);
                 cell.XID = i;
                 cell.YID = j; 
                 cells[i][j] = cell; 
+                cells[i][j].symbol = "Empty";
                 //append element from last item in array
                 boardElement.appendChild(cells[i][j]);
             }   
@@ -107,7 +144,7 @@ const board = (() => {
     }
 
     function setSymbol(e) {
-        cell = e.target;
+        let cell = e.target;
         let symbol = turnController.turnChange();
         turnController.turnAnnouncement();
         cell.innerText = symbol;
@@ -125,7 +162,7 @@ const board = (() => {
         });
     }
 
-    return {resetBoard,getAllCells,getCellSymbol,stopGame};
+    return {resetBoard,getAllCells,getCellSymbol,stopGame,getLengthToWin,getBoardSize};
 })();
 
 
@@ -133,11 +170,13 @@ const board = (() => {
 const turnController = (() => {
     let tracker = 1;
     let turnCounter = 0;
+    let boardSize;
 
     function upTurnCounter(){
+        boardSize = board.getBoardSize();
         turnCounter++;
-        console.log(turnCounter);
-        if(turnCounter == 9){
+        // console.log(turnCounter);
+        if(turnCounter === (boardSize * boardSize)){
             gameEnd(null);
         }
     }
@@ -172,32 +211,42 @@ const turnController = (() => {
 
 function matchChecker(x,y, symbol) {
 
+    let lengthToWin = board.getLengthToWin();
+    // console.log(`Length to win is ${lengthToWin}`);
     let columncounter = 0;
     let rowcounter = 0;
     let forwardDiagcounter = 0;
     let backwardDiagcounter = 0;
+    let cells = board.getAllCells();
 
 
     // column check
-    for(let i=x+1, j=x-1; i <= board.getAllCells().length || j>-1 ; i++, j--) {
+    for(let i=x+1, j=x-1, k=1, countI = true, countJ = true; k < cells.length ; i++, j--, k++) {
         
-        if(i < board.getAllCells().length){
-            // if(cells[i][y].symbol !== symbol){
-            if(board.getCellSymbol(i,y) !== symbol){
-                break;
-            }
+        if(i >= cells.length || (board.getCellSymbol(i,y) !== symbol)){
+            countI = false;
+        } 
+        if(j < 0 ||(board.getCellSymbol(j,y) !== symbol)){
+            countJ = false;
+        }
+        
+        
+        if(countI){
             columncounter = columncounter + 1;
+            // console.log(`Match! Counter is ${columncounter}`);   
+        }
+        
+        if(countJ){
+            columncounter = columncounter + 1;
+            // console.log(`Match! Counter is ${columncounter}`);
+        }
+            
+
+        if (countI === false && countJ === false){
+            break;
         }
 
-        if(j >= 0){
-            // if(cells[j][y].symbol !== symbol){
-            if(board.getCellSymbol(j,y) !== symbol){
-                break;
-            }
-            columncounter = columncounter + 1;
-        } 
-
-        if(columncounter === 2) {
+        if(columncounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
@@ -205,93 +254,99 @@ function matchChecker(x,y, symbol) {
     }
 
     // row check
-    for(let i=y+1, j=y-1; i <= board.getAllCells().length || j>-1 ; i++, j--) {
+    for(let i=y+1, j=y-1, k=1, countI = true, countJ = true; k < cells.length; i++, j--, k++) {
+
+        if(i >= cells.length || (board.getCellSymbol(x,i) !== symbol)){
+            countI = false;
+        } 
+        if(j < 0 ||(board.getCellSymbol(x,j) !== symbol)){
+            countJ = false;
+        }
         
-        if(i < board.getAllCells().length){
-            // if(cells[x][i].symbol !== symbol){
-            if(board.getCellSymbol(x,i) !== symbol){
-                break;
-            }
+        if(countI){
             rowcounter = rowcounter + 1;
         }
 
-        if(j >= 0){
-            // if(cells[x][j].symbol !== symbol){
-            if(board.getCellSymbol(x,j) !== symbol){
-                break;
-            }
-            rowcounter = rowcounter + 1;
-        } 
-        if(rowcounter === 2) {
+        if(countJ){
+            rowcounter = rowcounter + 1;           
+        }
+
+        if (countI === false && countJ === false){
+            break;
+        }
+
+        if(rowcounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
         }
+        
     }
 
 
     // '\' diagonal check
-    for(let i=1; i <= board.getAllCells().length; i++) {
+    for(let i=1, j=1, k=1, countI = true, countJ = true; k < cells.length; i++, j++, k++) {
 
-        if( (x+i < board.getAllCells().length) && (y+i < board.getAllCells().length)){
-            // if(cells[x+i][y+i].symbol !== symbol){
-            if(board.getCellSymbol(x+i,y+i) !== symbol){
-                break;
-            }
-            else {
-                backwardDiagcounter = backwardDiagcounter + 1;
-            }
+        if( x+i >= cells.length || y+i >= cells.length || (board.getCellSymbol(x+i,y+i) !== symbol)){
+            countI = false;
+        }
+        if(x-j < 0 || y-j < 0 || (board.getCellSymbol(x-j,y-j) !== symbol)){
+            countJ = false;
         }
 
-        if((x-i >= 0) && (y-i >= 0)) {
-            // if(cells[x-i][y-i].symbol !== symbol){
-            if(board.getCellSymbol(x-i,y-i) !== symbol){
-                break;
-            }
-            else {
-                backwardDiagcounter = backwardDiagcounter + 1;
-            }
+        if(countI){
+            // console.log(`cells[${x},${y}] compared with cells[${x+i},${y+i}]`);
+            backwardDiagcounter = backwardDiagcounter + 1;
+        }
+
+        if(countJ){
+            // console.log(`cells[${x},${y}] compared with cells[${x-j},${y-j}]`);
+            backwardDiagcounter = backwardDiagcounter + 1;
+        }
+
+        if (countI === false && countJ === false){
+            break;
         }
         
-        if(backwardDiagcounter === 2) {
+        if(backwardDiagcounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
         }
     }
-
 
     // '/' diagonal check
-    for(let i=1; i <= board.getAllCells().length; i++) {
+    for(let i=1, j=1, k=1, countI = true, countJ = true; k < cells.length; i++, j++, k++) {
 
-        if((x-i >= 0) && (y+i < board.getAllCells().length)){
-            // if(cells[x-i][y+i].symbol !== symbol){
-            if(board.getCellSymbol(x-i,y+i) !== symbol){
-                break;
-            }
-            else {
-                forwardDiagcounter = forwardDiagcounter + 1;
-            }
+        if((x-j < 0) || (y+j) >=cells.length || (board.getCellSymbol(x-j,y+j) !== symbol)){
+            // console.log('fwddiag false');
+            countJ = false;
+        }
+        if((x+i >= cells.length) || (y-i < 0) || (board.getCellSymbol(x+i,y-i) !== symbol)){
+            // console.log('fwddiag false');
+            countI = false;
         }
 
-        if((x+i < board.getAllCells().length) && (y-i >= 0)) {
-            // if(cells[x+i][y-i].symbol !== symbol){
-            if(board.getCellSymbol(x+i,y-i) !== symbol){
-                break;
-            }
-            else {
-                forwardDiagcounter = forwardDiagcounter + 1;
-            }
+        if(countI){
+            // console.log(`cells[${x},${y}] compared with cells[${x+i},${y-i}]`);
+            forwardDiagcounter = forwardDiagcounter + 1;
+        }
+
+        if(countJ){
+            // console.log(`cells[${x},${y}] compared with cells[${x-j},${y+j}]`);
+            forwardDiagcounter = forwardDiagcounter + 1;
+        }
+
+        if (countI === false && countJ === false){
+            break;
         }
         
-        if(forwardDiagcounter === 2) {
+        if(forwardDiagcounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
         }
     }
-
-
 }
 
 
@@ -334,3 +389,20 @@ function gameEnd(symbol) {
         turnController.turnAnnouncement();
     });
 }
+
+const redrawBoard = document.querySelector('.redraw');
+redrawBoard.addEventListener('click', () => {
+    board.resetBoard();
+    turnController.resetTracker();
+    turnController.resetTurnCounter();
+    turnController.turnAnnouncement();
+});
+
+const reset = document.querySelector('.reset');
+reset.addEventListener('click', () => {
+    console.log('reset pressed');
+    board.resetBoard(true);
+    turnController.resetTracker();
+    turnController.resetTurnCounter();
+    turnController.turnAnnouncement();
+});
