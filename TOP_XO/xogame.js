@@ -229,49 +229,35 @@ function matchChecker(x,y, symbol) {
 
 
     // column check
-    for(let i=x+1, j=x-1, k=1; k < cells.length ; i++, j--, k++) {
+    for(let i=x+1, j=x-1, k=1, countI = true, countJ = true; k < cells.length ; i++, j--, k++) {
         
-        if((i >= cells.length || (board.getCellSymbol(i,y) !== symbol)) && (j < 0 ||(board.getCellSymbol(j,y) !== symbol))){
-            break;
+        if(i >= cells.length || (board.getCellSymbol(i,y) !== symbol)){
+            countI = false;
+        } 
+        if(j < 0 ||(board.getCellSymbol(j,y) !== symbol)){
+            countJ = false;
         }
-        console.log(`cells[${x},${y}] compared with cells[${i},${y}]`);
         
-        if(i < cells.length){
+        
+        if(countI && i < cells.length){
+            // console.log(`cells[${x},${y}] compared with cells[${i},${y}]`);
             if(board.getCellSymbol(i,y) === symbol){
                 
                 columncounter = columncounter + 1;
-                console.log(`Match! Counter is ${columncounter}`);
+                // console.log(`Match! Counter is ${columncounter}`);
             }   
         }
-        console.log(`cells[${x},${y}] compared with cells[${j},${y}]`);
-        if(j >= 0 && j!==x){
+        
+        if(countJ && j >= 0){
+            // console.log(`cells[${x},${y}] compared with cells[${j},${y}]`);
             if(board.getCellSymbol(j,y) === symbol) {
                 columncounter = columncounter + 1;
-                console.log(`Match! Counter is ${columncounter}`);
+                // console.log(`Match! Counter is ${columncounter}`);
             }
             
         }
-        
-        
-        // if(i < board.getAllCells().length){
-        //     console.log(`cells[${x},${y}] compared with cells[${i}${y}]`);
-        //     // if(cells[i][y].symbol !== symbol){
-        //     if(board.getCellSymbol(i,y) !== symbol){
-        //         break;
-        //     }
-        //     columncounter = columncounter + 1;
-        // }
 
-        // if(j >= 0){
-        //     // if(cells[j][y].symbol !== symbol){
-        //     console.log(`cells[${x},${y}] compared with cells[${j}${y}]`);
-        //     if(board.getCellSymbol(j,y) !== symbol){
-        //         break;
-        //     }
-        //     columncounter = columncounter + 1;
-        // } 
-
-        if(columncounter === (lengthToWin - 1)) {
+        if(columncounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
@@ -279,50 +265,61 @@ function matchChecker(x,y, symbol) {
     }
 
     // row check
-    for(let i=y+1, j=y-1, k=1; k < cells.length; i++, j--, k++) {
+    for(let i=y+1, j=y-1, k=1, countI = true, countJ = true; k < cells.length; i++, j--, k++) {
+
+        if(i >= cells.length || (board.getCellSymbol(x,i) !== symbol)){
+            countI = false;
+        } 
+        if(j < 0 ||(board.getCellSymbol(x,j) !== symbol)){
+            countJ = false;
+        }
+        // console.log(`cells[${x},${y}] compared with cells[${x},${i}]`);
         
-        if(i < board.getAllCells().length){
-            // if(cells[x][i].symbol !== symbol){
-            if(board.getCellSymbol(x,i) !== symbol){
-                break;
+        if(countI && i < cells.length){
+            if(board.getCellSymbol(x,i) === symbol){
+                
+                rowcounter = rowcounter + 1;
+                // console.log(`Match! Counter is ${rowcounter}`);
+            }   
+        }
+        // console.log(`cells[${x},${y}] compared with cells[${x},${j}]`);
+        if(countJ && j >= 0){
+            if(board.getCellSymbol(x,j) === symbol) {
+                rowcounter = rowcounter + 1;
+                // console.log(`Match! Counter is ${rowcounter}`);
             }
-            rowcounter = rowcounter + 1;
+            
         }
 
-        if(j >= 0){
-            // if(cells[x][j].symbol !== symbol){
-            if(board.getCellSymbol(x,j) !== symbol){
-                break;
-            }
-            rowcounter = rowcounter + 1;
-        } 
-        if(rowcounter === (lengthToWin - 1)) {
+        if(rowcounter >= (lengthToWin - 1)) {
             gameEnd(symbol);
             console.log('Winner');
             return null;
         }
+        
     }
 
 
     // '\' diagonal check
-    for(let i=1; i <= board.getAllCells().length; i++) {
+    for(let i=1, j=1, k=1, countI = true, countJ = true; k < cells.length; i++, j++, k++) {
 
-        if( (x+i < board.getAllCells().length) && (y+i < board.getAllCells().length)){
-            // if(cells[x+i][y+i].symbol !== symbol){
-            if(board.getCellSymbol(x+i,y+i) !== symbol){
-                break;
-            }
-            else {
+        if((x+i >= cells.length) || (board.getCellSymbol(x+i,y+i) !== symbol)){
+            countI = false;
+        }
+        if((x-j < 0) ||(board.getCellSymbol(x-j,y-j) !== symbol)){
+            countJ = false;
+        }
+
+        if(countI && (x+i < cells.length)){
+            console.log(`cells[${x},${y}] compared with cells[${x+i},${y+i}]`);
+            if(board.getCellSymbol(x+i,y+i) === symbol){
                 backwardDiagcounter = backwardDiagcounter + 1;
             }
         }
 
-        if((x-i >= 0) && (y-i >= 0)) {
-            // if(cells[x-i][y-i].symbol !== symbol){
-            if(board.getCellSymbol(x-i,y-i) !== symbol){
-                break;
-            }
-            else {
+        if(countJ && (x-j > 0)){
+            console.log(`cells[${x},${y}] compared with cells[${x-j},${y-j}]`);
+            if(board.getCellSymbol(x-j,y-j) === symbol){
                 backwardDiagcounter = backwardDiagcounter + 1;
             }
         }
@@ -334,26 +331,26 @@ function matchChecker(x,y, symbol) {
         }
     }
 
-
     // '/' diagonal check
-    for(let i=1; i <= board.getAllCells().length; i++) {
+    for(let i=1, j=1, k=1, countI = true, countJ = true; k < cells.length; i++, j++, k++) {
 
-        if((x-i >= 0) && (y+i < board.getAllCells().length)){
-            // if(cells[x-i][y+i].symbol !== symbol){
-            if(board.getCellSymbol(x-i,y+i) !== symbol){
-                break;
-            }
-            else {
+        if((x-j < 0) || (y+j) >=cells.length || (board.getCellSymbol(x-i,y+i) !== symbol)){
+            countJ = false;
+        }
+        if((x+i >= cells.length) || (y-i < 0) || (board.getCellSymbol(x+j,y-j) !== symbol)){
+            countI = false;
+        }
+
+        if(countI && (x+i < cells.length)){
+            console.log(`cells[${x},${y}] compared with cells[${x+i},${y-i}]`);
+            if(board.getCellSymbol(x+i,y-i) === symbol){
                 forwardDiagcounter = forwardDiagcounter + 1;
             }
         }
 
-        if((x+i < board.getAllCells().length) && (y-i >= 0)) {
-            // if(cells[x+i][y-i].symbol !== symbol){
-            if(board.getCellSymbol(x+i,y-i) !== symbol){
-                break;
-            }
-            else {
+        if(countJ && (x-j > 0)){
+            console.log(`cells[${x},${y}] compared with cells[${x-j},${y+j}]`);
+            if(board.getCellSymbol(x-j,y+j) === symbol){
                 forwardDiagcounter = forwardDiagcounter + 1;
             }
         }
@@ -364,8 +361,6 @@ function matchChecker(x,y, symbol) {
             return null;
         }
     }
-
-
 }
 
 
