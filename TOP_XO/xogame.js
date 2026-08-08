@@ -1,10 +1,37 @@
+const boardSizeEle = document.querySelector('.boardSize');
+const lengthToWinEle = document.querySelector('.lengthToWin');
+const redrawBoard = document.querySelector('.redraw');
+let boardSize = 3;
+let lengthToWin = 3;
+let boardMax = boardSizeEle.max;
 
-/*
-1. Set Symbol
-2. Alternate the symbol
-3. 
+boardSizeEle.addEventListener('input', (e) => {  
+    console.log(`boardMax is ${boardMax}`)
+    boardSize = parseInt(e.target.value);
+    console.log(`Entered size is ${boardSize}`);
+    if (boardSize > boardMax) {
+        boardSizeEle.value = boardMax;
+        boardSize = boardMax;
+        console.log(`Resized size is ${boardSize}`);
+    }
+})
 
-*/
+lengthToWinEle.addEventListener('input', (e) => {
+    lengthToWin = parseInt(e.target.value);
+
+    if (Number.isNaN(lengthToWin)) {
+        lengthToWin = 3;
+        lengthToWinEle.value = 3;
+    }
+
+    if (lengthToWin > boardSize && lengthToWin !== 3) {
+        lengthToWinEle.value = boardSize;
+        lengthToWin = boardSize;
+    }
+
+    console.log(lengthToWin);
+})
+
 
 const player = (() => {
 
@@ -334,3 +361,7 @@ function gameEnd(symbol) {
         turnController.turnAnnouncement();
     });
 }
+
+redrawBoard.addEventListener('click', () => {
+    board.resetBoard()
+});
